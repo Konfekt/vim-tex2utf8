@@ -1,7 +1,7 @@
 scriptencoding utf-8
 
 if !exists('g:latex2utf8_pairs')
-  let g:latex2utf8_pairs = []
+	let g:latex2utf8_pairs = []
 endif
 let g:latex2utf8_pairs += [
 			\ ['\alpha', 'α'],
@@ -328,77 +328,78 @@ let g:latex2utf8_pairs += [
 			\ ['\eth', 'ð'],
 			\ ['\mho', '℧'],
 			\
-  		\ ['\mathbb{C}', 'ℂ'],
-  		\ ['\mathbb{F}', '𝔽'],
-  		\ ['\mathbb{H}', 'ℍ'],
-  		\ ['\mathbb{N}', 'ℕ'],
-  		\ ['\mathbb{P}', 'ℙ'],
-  		\ ['\mathbb{Q}', 'ℚ'],
-  		\ ['\mathbb{R}', 'ℝ'],
-  		\ ['\mathbb{Z}', 'ℤ'],
+			\ ['\mathbb{C}', 'ℂ'],
+			\ ['\mathbb{F}', '𝔽'],
+			\ ['\mathbb{H}', 'ℍ'],
+			\ ['\mathbb{N}', 'ℕ'],
+			\ ['\mathbb{P}', 'ℙ'],
+			\ ['\mathbb{Q}', 'ℚ'],
+			\ ['\mathbb{R}', 'ℝ'],
+			\ ['\mathbb{Z}', 'ℤ'],
 			\
-  		\ ['\lbrace', '['],
-  		\ ['\lceil', '⌈'],
-  		\ ['\lfloor', '⌊'],
-  		\ ['\lgroup', '⌊'],
-  		\ ['\lmoustache', '⎛'],
-  		\ ['\rbrace', ']'],
-  		\ ['\rceil', '⌉'],
-  		\ ['\rfloor', '⌋'],
-  		\ ['\rgroup', '⌋'],
+			\ ['\lbrace', '['],
+			\ ['\lceil', '⌈'],
+			\ ['\lfloor', '⌊'],
+			\ ['\lgroup', '⌊'],
+			\ ['\lmoustache', '⎛'],
+			\ ['\rbrace', ']'],
+			\ ['\rceil', '⌉'],
+			\ ['\rfloor', '⌋'],
+			\ ['\rgroup', '⌋'],
 			\
 			\ ['\to', '→'],
 			\
-  		\ ['\sqrt', '√'],
+			\ ['\sqrt', '√'],
 			\
-  		\ ['\coloneq', ':='],
-  		\ ['\colon', ':'],
+			\ ['\coloneq', ':='],
+			\ ['\colon', ':'],
 			\
-  		\ ['\mid', '|'],
-  		\ ['\nmid', '∤'],
+			\ ['\mid', '|'],
+			\ ['\nmid', '∤'],
 			\
-  		\ ['\langle', '⟨'],
-  		\ ['\rangle', '⟩'],
+			\ ['\langle', '⟨'],
+			\ ['\rangle', '⟩'],
 			\
-  		\ ['\{', '{'],
-  		\ ['\}', '}'],
-  		\ ['\#', '#'],
-	\]
+			\ ['\{', '{'],
+			\ ['\}', '}'],
+			\ ['\#', '#'],
+			\]
 
-let g:latex2utf8_pairs_utf8  = g:latex2utf8_pairs
-let g:latex2utf8_pairs_latex = g:latex2utf8_pairs + [
-  \ ['\,', ' '],
-  \ ['\;', ' '],
-  \ ['\:', ' '],
-  \ ['\quad', '  '],
-  \ ['\qquad', '    '],
-  \ ]
+if !exists('g:latex2utf8_pairs_utf8') | let g:latex2utf8_pairs_utf8 = [] | endif
+if !exists('g:latex2utf8_pairs_latex') | let g:latex2utf8_pairs_latex = [] |endif
+let g:latex2utf8_pairs_latex = + [
+			\ ['\,', ' '],
+			\ ['\;', ' '],
+			\ ['\:', ' '],
+			\ ['\quad', '  '],
+			\ ['\qquad', '		'],
+			\ ]
 
 " function to convert latex symbols to utf-8
 function! latex2utf8#LatexToUTF8(o, c) abort
-  normal! m`
+	normal! m`
 
-  let gdefault = &gdefault
-  set gdefault&
+	let gdefault = &gdefault
+	set gdefault&
 
-  for p in g:latex2utf8_pairs_latex
-    exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[0], '\/') . '\>/' . escape(p[1], '\/') . '/geI'
-  endfor
+	for p in g:latex2utf8_pairs + g:latex2utf8_pairs_latex
+		exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[0], '\/') . '\>/' . escape(p[1], '\/') . '/geI'
+	endfor
 
-  let &gdefault = gdefault
-  normal! g``
+	let &gdefault = gdefault
+	normal! g``
 endfunction
 function! latex2utf8#UTF8ToLatex(o, c) abort
-  normal! m`
+	normal! m`
 
-  let gdefault = &gdefault
-  set gdefault&
+	let gdefault = &gdefault
+	set gdefault&
 
-  for p in g:latex2utf8_pairs_utf8
-    exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[1], '\/') . '/' . escape(p[0], '\/') . '/geI'
-  endfor
+	for p in g:latex2utf8_pairs + g:latex2utf8_pairs_utf8
+		exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[1], '\/') . '/' . escape(p[0], '\/') . '/geI'
+	endfor
 
-  let &gdefault = gdefault
-  normal! g``
+	let &gdefault = gdefault
+	normal! g``
 endfunction
 

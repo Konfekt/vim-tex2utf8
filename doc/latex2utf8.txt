@@ -1,5 +1,38 @@
 Tex2UTF8, conversion between UTF-8 and LaTeX       *TeX2UTF8* *tex2utf8*
+===========================================================================
+
+0. Purpose ~
 
 This Vim plug-in provides the two commands *:Latex2UTF8* and *:UTF8ToLatex*
-that operate on a range (by default the whole buffer) and convert between
-LaTeX commands and UTF-8 characters.
+that operate on a range (by default the whole buffer) and convert forth and
+back between LaTeX commands and Unicode (UTF-8 encoded) characters.
+
+1. Configuration ~
+                                                  *tex2uft8-configuration*
+
+Pairs of LaTeX commands and Unicode characters between which to convert, say
+between '\command' and 'c', can be added by the variable *g:latex2utf8_pairs*,
+say by  adding to `vimrc` the lines: >
+
+  let g:latex2utf8_pairs = [
+			  \ ['\command, 'c'],
+			  \]
+<
+Pairs of LaTeX commands and Unicode characters between which to convert
+forth, say from '\command' to 'c', can be added by the list of pairs
+*g:latex2utf8_pairs_latex* by adding to `vimrc` the lines: >
+
+  let g:latex2utf8_pairs_latex = [
+			  \ ['\command, 'c'],
+			  \]
+<
+The other way around, to convert back from 'c' to '\command', add to the list
+*g:latex2utf8_pairs_utf8* the same pair: >
+
+  let g:latex2utf8_pairs_utf8 = [
+	  \ ['\command, 'c'],
+	  \]
+<
+
+
+vim:tw=78:ts=2:sts=2:sw=2:ft=help:norl
