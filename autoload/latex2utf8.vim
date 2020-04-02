@@ -350,6 +350,7 @@ let g:latex2utf8_pairs += [
 			\ ['\to', '→'],
 			\
 			\ ['\sqrt', '√'],
+			\ ['\sqrt[3]', '∛'],
 			\
 			\ ['\coloneq', ':='],
 			\ ['\colon', ':'],
@@ -367,7 +368,7 @@ let g:latex2utf8_pairs += [
 
 if !exists('g:latex2utf8_pairs_utf8') | let g:latex2utf8_pairs_utf8 = [] | endif
 if !exists('g:latex2utf8_pairs_latex') | let g:latex2utf8_pairs_latex = [] |endif
-let g:latex2utf8_pairs_latex = + [
+let g:latex2utf8_pairs_latex += [
 			\ ['\,', ' '],
 			\ ['\;', ' '],
 			\ ['\:', ' '],
