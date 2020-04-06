@@ -53,7 +53,6 @@ let g:latex2utf8_pairs += [
 			\ ['\sqsubseteq', '⊑'],
 			\ ['\in', '∈'],
 			\ ['\vdash', '⊢'],
-			\ ['\mid', '∣'],
 			\ ['\smile', '⌣'],
 			\ ['\geq', '≥'],
 			\ ['\gg', '≫'],
@@ -352,10 +351,6 @@ let g:latex2utf8_pairs += [
 			\ ['\sqrt', '√'],
 			\ ['\sqrt[3]', '∛'],
 			\
-			\ ['\coloneq', ':='],
-			\ ['\colon', ':'],
-			\
-			\ ['\mid', '|'],
 			\ ['\nmid', '∤'],
 			\
 			\ ['\langle', '⟨'],
@@ -367,6 +362,8 @@ let g:latex2utf8_pairs += [
 			\]
 
 if !exists('g:latex2utf8_pairs_utf8') | let g:latex2utf8_pairs_utf8 = [] | endif
+let g:latex2utf8_pairs_utf8 += [
+			\]
 if !exists('g:latex2utf8_pairs_latex') | let g:latex2utf8_pairs_latex = [] |endif
 let g:latex2utf8_pairs_latex += [
 			\ ['\,', ' '],
@@ -374,6 +371,10 @@ let g:latex2utf8_pairs_latex += [
 			\ ['\:', ' '],
 			\ ['\quad', '  '],
 			\ ['\qquad', '		'],
+			\
+			\ ['\mid', '|'],
+			\ ['\coloneq', ':='],
+			\ ['\colon', ':'],
 			\ ]
 
 " function to convert latex symbols to utf-8
