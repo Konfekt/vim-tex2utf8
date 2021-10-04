@@ -10,17 +10,9 @@ back between LaTeX commands and Unicode (UTF-8 encoded) characters.
 1. Configuration ~
                                                   *tex2uft8-configuration*
 
-Pairs of LaTeX commands and Unicode characters between which to convert, say
-between '\command' and 'c', can be added by the variable *g:latex2utf8_pairs*,
-say by  adding to `vimrc` the lines: >
-
-  let g:latex2utf8_pairs = [
-			  \ ['\command, 'c'],
-			  \]
-<
 Pairs of LaTeX commands and Unicode characters between which to convert
 forth, say from '\command' to 'c', can be added by the list of pairs
-*g:latex2utf8_pairs_latex* by adding to `vimrc` the lines: >
+*g:latex2utf8_pairs_latex*, say by adding to `vimrc` the lines: >
 
   let g:latex2utf8_pairs_latex = [
 			  \ ['\command, 'c'],
