@@ -2,19 +2,7 @@ This Vim plug-in provides the two commands `:Latex2UTF8` and `:UTF8ToLatex` that
 
 # Configuration
 
-Pairs of `LaTeX` commands and Unicode characters between which to convert forth
-and back, say between `\command` and `c`, can be added by the list
-`g:latex2utf8_pairs`, say by  adding to `vimrc` the lines:
-
-```vim
-let g:latex2utf8_pairs = [
-			\ ['\command, 'c'],
-			\]
-```
-
-Pairs of `LaTeX` commands and Unicode characters between which to convert
-forth, say from `\command` to `c`, can be added by the list of pairs
-`g:latex2utf8_pairs_latex` by adding to `vimrc` the lines:
+Pairs of `LaTeX` commands and Unicode characters between which to convert forth and back, say between `\command` and `c`, can be passed via the list `g:latex2utf8_pairs_latex`, say by  adding to `vimrc` the lines:
 
 ```vim
 let g:latex2utf8_pairs_latex = [
@@ -22,8 +10,7 @@ let g:latex2utf8_pairs_latex = [
 			\]
 ```
 
-The other way around, to convert back from `c` to `\command`, add to the
-list `g:latex2utf8_pairs_utf8` the same pair:
+The other way around, to convert back from `c` to `\command`, add to the list `g:latex2utf8_pairs_utf8` the same pair:
 
 ```vim
 let g:latex2utf8_pairs_utf8 = [
