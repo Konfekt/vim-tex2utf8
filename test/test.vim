@@ -86,6 +86,33 @@ function! Test_user_pairs_override_defaults() abort
   endtry
 endfunction
 
+" An escaped backslash, underscore or caret starts no command: '\\alpha' is a
+" line break followed by 'alpha', '\_1' an underscore and 1, '\^o' an accent.
+function! Test_escaped_commands_left_alone() abort
+  call assert_equal(['x\\alpha a\_1 \^o \\α \\\\β \\\\\\ \\{ α'],
+        \ s:Forward(['x\\alpha a\_1 \^o \\\alpha \\\\\beta \\\\\\ \\{ \alpha']))
+  call assert_equal(['\\', '\_1'], s:Forward(['\\', '\_1']))
+endfunction
+
+" A control word followed by a letter is separated by an empty group {}:
+" αx became \alphax, a different command.  LatexToUTF8 removes that group.
+function! Test_control_word_before_letter() abort
+  call assert_equal(['\alpha{}x \alpha\beta \alpha{} _\beta{}c \alpha2 x^ab'], s:Backward(['αx αβ α{} ᵦc α2 xᵃb']))
+  call assert_equal(['αx αβ α ᵦc α{x} \alphax'], s:Forward(['\alpha{}x \alpha{}\beta \alpha{} _\beta{}c \alpha{x} \alphax']))
+  call assert_equal(['αx ℏbar'], s:Forward(s:Backward(['αx ℏbar'])))
+endfunction
+
+" Keys of user pairs starting with characters special in a collection.
+function! Test_user_keys_starting_with_special_characters() abort
+  let save = get(g:, 'latex2utf8_pairs_latex', [])
+  let g:latex2utf8_pairs_latex = [[']]', '⟧'], ['-->', '⟶'], ['^^', '↑↑']]
+  try
+    call assert_equal(['⟧ ⟶ ↑↑ ²'], s:Forward([']] --> ^^ ^2']))
+  finally
+    let g:latex2utf8_pairs_latex = save
+  endtry
+endfunction
+
 function! Test_special_characters_in_user_pairs() abort
   let save = [get(g:, 'latex2utf8_pairs_latex', []), get(g:, 'latex2utf8_pairs_utf8', [])]
   let g:latex2utf8_pairs_latex = [['\&', '&'], ['a/b', '~\1'], ['--', '–']]

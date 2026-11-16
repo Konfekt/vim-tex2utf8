@@ -2,6 +2,8 @@ This Vim plug-in provides the two commands `:LatexToUTF8` and `:UTF8ToLatex` tha
 
 A command is only converted as a whole: `\in` is left alone in `\int`, and `^1` in `^12`.
 Where several commands start alike, the longest one wins, say `\sqrt[3]` over `\sqrt`.
+An escaped backslash, underscore or caret starts no command: `\\alpha` (a line break followed by `alpha`) and `a\_1` are left alone.
+A control word followed by a letter is converted back with an empty group, say `αx` to `\alpha{}x` rather than `\alphax`, and `:LatexToUTF8` removes such a group, say from `\alpha{}x` to `αx`.
 The built-in pairs never convert plain ASCII characters such as `{`, `#` or `|` back to `LaTeX`.
 
 # Configuration
