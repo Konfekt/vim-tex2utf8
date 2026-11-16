@@ -504,11 +504,21 @@ function! s:Convert(line1, line2, pairs, from) abort
 	let view = winsaveview()
 	try
 		execute 'silent keeppatterns' a:line1 . ',' . a:line2 . 'substitute/' . pattern
-					\ . '/\=l:table[submatch(0)]/e' . (&gdefault ? '' : 'g')
+					\ . '/\=' . s:replacement[a:from] . '/e' . (&gdefault ? '' : 'g')
 	finally
 		call winrestview(view)
 	endtry
 endfunction
+
+" The replacement of a match (an expression in l:table): a LaTeX command may
+" end in an empty group {} that separates a control word from a following
+" letter, and a LaTeX command for a character is followed by {} if it ends in
+" a control word and a letter follows, so that, say, αx becomes \alpha{}x
+" rather than \alphax.
+let s:replacement = [
+			\ 'has_key(l:table, submatch(0)) ? l:table[submatch(0)] : l:table[submatch(0)[:-3]]',
+			\ 'empty(submatch(1)) ? l:table[submatch(0)] : l:table[submatch(0)] . (l:table[submatch(0)] =~# ''\\\a\+$'' ? ''{}'' : '''')',
+			\ ]
 
 " Return the table from key to replacement and the pattern matching all keys,
 " cached for the last pairs given in each direction.
@@ -537,8 +547,19 @@ function! s:Compile(pairs, from) abort
 		" The empty string marks the end of a key and holds what may follow it.
 		let node[''] = a:from == 0 ? s:LatexBoundary(key) : ''
 	endfor
-	" The backtracking regexp engine is much faster on the LaTeX keys.
-	let pattern = (a:from == 0 ? '\%#=1' : '') . '\V\C' . s:TriePattern(trie)
+	let pattern = s:TriePattern(trie)
+	if a:from == 0
+		" A LaTeX command must not be escaped, that is, preceded by an odd number
+		" of backslashes: in '\\alpha' or '\_1' there is no \alpha or _1.  The
+		" lookahead for the first character of a key keeps the costly lookbehind
+		" to where a key may start, and the lookbehind only looks back 32 bytes.
+		let first = map(sort(filter(keys(trie), '!empty(v:val)')), 'v:val =~# ''[]^\\-]'' ? ''\'' . v:val : v:val')
+		" The backtracking regexp engine is much faster on the LaTeX keys.
+		let pattern = '\%#=1\V\C\[' . join(first, '') . ']\@=\%(\%(\_^\|\[^\\]\)\%(\\\\\)\*\)\@32<=' . pattern
+	else
+		" Capture an ASCII letter that follows, without consuming it.
+		let pattern = '\V\C' . pattern . '\%(\(\a\)\@=\)\='
+	endif
 	let s:cache[a:from] = [deepcopy(a:pairs), table, pattern]
 	return [table, pattern]
 endfunction
@@ -571,12 +592,13 @@ endfunction
 
 " Return what must not follow the LaTeX command key for it to match in full:
 " a control word such as \in must not be followed by a letter (to leave \int
-" alone), and a sub- or superscript such as ^1 not by a letter or digit.
+" alone), unless it ends in an empty group {}, which is then removed as well,
+" and a sub- or superscript such as ^1 not by a letter or digit.
 function! s:LatexBoundary(key) abort
 	if a:key =~# '^[_^][0-9A-Za-z]$'
 		return '\[0-9A-Za-z]\@!'
 	elseif a:key =~# '\a$'
-		return '\a\@!'
+		return '\%({}\|\a\@!\)'
 	endif
 	return ''
 endfunction
