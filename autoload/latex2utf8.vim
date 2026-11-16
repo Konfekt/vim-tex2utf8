@@ -1,9 +1,11 @@
 scriptencoding utf-8
 
-if !exists('g:latex2utf8_pairs')
-	let g:latex2utf8_pairs = []
-endif
-let g:latex2utf8_pairs += [
+let s:save_cpo = &cpoptions
+set cpoptions&vim
+
+" Pairs of a LaTeX command and its Unicode character, converted both ways.
+" If several pairs share a character, the first one wins in UTF8ToLatex.
+let s:pairs = [
 			\ ['^0', '⁰'],
 			\ ['^1', '¹'],
 			\ ['^2', '²'],
@@ -100,7 +102,7 @@ let g:latex2utf8_pairs += [
 			\ ['_+', '₊'],
 			\ ['_-', '₋'],
 			\ ['_\beta', 'ᵦ'],
-			\ ['_\delta', 'ᵨ'],
+			\ ['_\rho', 'ᵨ'],
 			\ ['_\phi', 'ᵩ'],
 			\ ['_\gamma', 'ᵧ'],
 			\ ['_\chi', 'ᵪ'],
@@ -109,7 +111,7 @@ let g:latex2utf8_pairs += [
 			\ ['\beta', 'β'],
 			\ ['\gamma', 'γ'],
 			\ ['\delta', 'δ'],
-			\ ['\epsilon', '∊'],
+			\ ['\epsilon', 'ϵ'],
 			\ ['\varepsilon', 'ε'],
 			\ ['\zeta', 'ζ'],
 			\ ['\eta', 'η'],
@@ -250,7 +252,7 @@ let g:latex2utf8_pairs += [
 			\ ['\Longleftarrow', '⇐'],
 			\ ['\Longrightarrow', '⇒'],
 			\ ['\Longleftrightarrow', '⇔'],
-			\ ['\longmapsto', '⇖'],
+			\ ['\longmapsto', '⟼'],
 			\ ['\uparrow', '↑'],
 			\ ['\downarrow', '↓'],
 			\ ['\updownarrow', '↕'],
@@ -270,7 +272,7 @@ let g:latex2utf8_pairs += [
 			\ ['\ell', 'ℓ'],
 			\ ['\Re', 'ℜ'],
 			\ ['\Im', 'ℑ'],
-			\ ['\aleph', 'א'],
+			\ ['\aleph', 'ℵ'],
 			\ ['\wp', '℘'],
 			\ ['\forall', '∀'],
 			\ ['\exists', '∃'],
@@ -297,9 +299,9 @@ let g:latex2utf8_pairs += [
 			\ ['\sharp', '♯'],
 			\ ['\digamma', 'Ϝ'],
 			\ ['\varkappa', 'ϰ'],
-			\ ['\beth', 'ב'],
-			\ ['\daleth', 'ד'],
-			\ ['\gimel', 'ג'],
+			\ ['\beth', 'ℶ'],
+			\ ['\daleth', 'ℸ'],
+			\ ['\gimel', 'ℷ'],
 			\ ['\lessdot', '⋖'],
 			\ ['\leqslant', '≤'],
 			\ ['\leqq', '≦'],
@@ -311,7 +313,6 @@ let g:latex2utf8_pairs += [
 			\ ['\curlyeqprec', '⋞'],
 			\ ['\precsim', '≾'],
 			\ ['\Subset', '⋐'],
-			\ ['\sqsubset', '⊏'],
 			\ ['\therefore', '∴'],
 			\ ['\smallsmile', '⌣'],
 			\ ['\vartriangleleft', '⊲'],
@@ -326,7 +327,6 @@ let g:latex2utf8_pairs += [
 			\ ['\curlyeqsucc', '⋟'],
 			\ ['\succsim', '≿'],
 			\ ['\Supset', '⋑'],
-			\ ['\sqsupset', '⊐'],
 			\ ['\because', '∵'],
 			\ ['\shortparallel', '∥'],
 			\ ['\smallfrown', '⌢'],
@@ -352,7 +352,7 @@ let g:latex2utf8_pairs += [
 			\ ['\between', '≬'],
 			\ ['\pitchfork', '⋔'],
 			\ ['\blacktriangleleft', '◀'],
-			\ ['\blacktriangleright', '▷'],
+			\ ['\blacktriangleright', '▶'],
 			\ ['\dashleftarrow', '⇠'],
 			\ ['\leftleftarrows', '⇇'],
 			\ ['\leftrightarrows', '⇆'],
@@ -393,7 +393,7 @@ let g:latex2utf8_pairs += [
 			\ ['\leftthreetimes', '⋋'],
 			\ ['\curlyvee', '⋎'],
 			\ ['\centerdot', '⋅'],
-			\ ['\rtimes', '⋈'],
+			\ ['\rtimes', '⋊'],
 			\ ['\Cap', '⋒'],
 			\ ['\barwedge', '⊼'],
 			\ ['\boxminus', '⊟'],
@@ -406,7 +406,6 @@ let g:latex2utf8_pairs += [
 			\ ['\circleddash', '⊝'],
 			\ ['\circledcirc', '⊚'],
 			\ ['\circledast', '⊛'],
-			\ ['\hbar', 'ℏ'],
 			\ ['\hslash', 'ℏ'],
 			\ ['\square', '□'],
 			\ ['\blacksquare', '■'],
@@ -419,7 +418,6 @@ let g:latex2utf8_pairs += [
 			\ ['\lozenge', '◊'],
 			\ ['\blacklozenge', '◆'],
 			\ ['\bigstar', '★'],
-			\ ['\angle', '∠'],
 			\ ['\measuredangle', '∡'],
 			\ ['\sphericalangle', '∢'],
 			\ ['\backprime', '‵'],
@@ -427,7 +425,6 @@ let g:latex2utf8_pairs += [
 			\ ['\Finv', 'Ⅎ'],
 			\ ['\varnothing', '∅'],
 			\ ['\eth', 'ð'],
-			\ ['\mho', '℧'],
 			\
 			\ ['\mathbb{C}', 'ℂ'],
 			\ ['\mathbb{F}', '𝔽'],
@@ -438,15 +435,13 @@ let g:latex2utf8_pairs += [
 			\ ['\mathbb{R}', 'ℝ'],
 			\ ['\mathbb{Z}', 'ℤ'],
 			\
-			\ ['\lbrace', '['],
 			\ ['\lceil', '⌈'],
 			\ ['\lfloor', '⌊'],
-			\ ['\lgroup', '⌊'],
-			\ ['\lmoustache', '⎛'],
-			\ ['\rbrace', ']'],
+			\ ['\lgroup', '⟮'],
+			\ ['\lmoustache', '⎰'],
 			\ ['\rceil', '⌉'],
 			\ ['\rfloor', '⌋'],
-			\ ['\rgroup', '⌋'],
+			\ ['\rgroup', '⟯'],
 			\
 			\ ['\to', '→'],
 			\
@@ -457,17 +452,17 @@ let g:latex2utf8_pairs += [
 			\
 			\ ['\langle', '⟨'],
 			\ ['\rangle', '⟩'],
-			\
-			\ ['\{', '{'],
-			\ ['\}', '}'],
-			\ ['\#', '#'],
 			\]
 
-if !exists('g:latex2utf8_pairs_utf8') | let g:latex2utf8_pairs_utf8 = [] | endif
-let g:latex2utf8_pairs_utf8 += [
-			\]
-if !exists('g:latex2utf8_pairs_latex') | let g:latex2utf8_pairs_latex = [] |endif
-let g:latex2utf8_pairs_latex += [
+" Pairs converted only from LaTeX to Unicode, because the Unicode side is
+" plain ASCII or whitespace that must be left alone in UTF8ToLatex.
+let s:pairs_latex = [
+			\ ['\{', '{'],
+			\ ['\}', '}'],
+			\ ['\lbrace', '{'],
+			\ ['\rbrace', '}'],
+			\ ['\#', '#'],
+			\
 			\ ['\,', ' '],
 			\ ['\;', ' '],
 			\ ['\:', ' '],
@@ -477,33 +472,114 @@ let g:latex2utf8_pairs_latex += [
 			\ ['\mid', '|'],
 			\ ['\coloneq', ':='],
 			\ ['\colon', ':'],
-			\ ]
+			\]
 
-" function to convert latex symbols to utf-8
-function! latex2utf8#LatexToUTF8(o, c) abort
-	normal! m`
-
-	let gdefault = &gdefault
-	set gdefault&
-
-	for p in g:latex2utf8_pairs + g:latex2utf8_pairs_latex
-		exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[0], '\/') . '\>/' . escape(p[1], '\/') . '/geI'
-	endfor
-
-	let &gdefault = gdefault
-	normal! g``
-endfunction
-function! latex2utf8#UTF8ToLatex(o, c) abort
-	normal! m`
-
-	let gdefault = &gdefault
-	set gdefault&
-
-	for p in g:latex2utf8_pairs + g:latex2utf8_pairs_utf8
-		exe 'silent keeppatterns ' . a:o . ',' . a:c . 'substitute/\V' . escape(p[1], '\/') . '/' . escape(p[0], '\/') . '/geI'
-	endfor
-
-	let &gdefault = gdefault
-	normal! g``
+" Return copies of the built-in pairs: 'both' are converted in both
+" directions, 'latex' only from LaTeX to Unicode.
+function! latex2utf8#DefaultPairs() abort
+	return {'both': deepcopy(s:pairs), 'latex': deepcopy(s:pairs_latex)}
 endfunction
 
+function! latex2utf8#LatexToUTF8(line1, line2) abort
+	call s:Convert(a:line1, a:line2,
+				\ get(g:, 'latex2utf8_pairs', []) + get(g:, 'latex2utf8_pairs_latex', [])
+				\ + s:pairs + s:pairs_latex, 0)
+endfunction
+
+function! latex2utf8#UTF8ToLatex(line1, line2) abort
+	call s:Convert(a:line1, a:line2,
+				\ get(g:, 'latex2utf8_pairs', []) + get(g:, 'latex2utf8_pairs_utf8', [])
+				\ + s:pairs, 1)
+endfunction
+
+" Replace, in a single pass over the lines line1 to line2, each occurrence of
+" pair[from] by pair[!from] for all given pairs.  The longest key matching at
+" a position wins, and the first pair given for a key.
+function! s:Convert(line1, line2, pairs, from) abort
+	let [table, pattern] = s:Compile(a:pairs, a:from)
+	if empty(table)
+		return
+	endif
+
+	let view = winsaveview()
+	try
+		execute 'silent keeppatterns' a:line1 . ',' . a:line2 . 'substitute/' . pattern
+					\ . '/\=l:table[submatch(0)]/e' . (&gdefault ? '' : 'g')
+	finally
+		call winrestview(view)
+	endtry
+endfunction
+
+" Return the table from key to replacement and the pattern matching all keys,
+" cached for the last pairs given in each direction.
+let s:cache = [[[], {}, ''], [[], {}, '']]
+function! s:Compile(pairs, from) abort
+	let cache = s:cache[a:from]
+	if cache[0] ==# a:pairs
+		return cache[1:]
+	endif
+
+	let table = {}
+	let trie = {}
+	for pair in a:pairs
+		let key = pair[a:from]
+		if empty(key) || has_key(table, key)
+			continue
+		endif
+		let table[key] = pair[!a:from]
+		let node = trie
+		for char in split(key, '\zs')
+			if !has_key(node, char)
+				let node[char] = {}
+			endif
+			let node = node[char]
+		endfor
+		" The empty string marks the end of a key and holds what may follow it.
+		let node[''] = a:from == 0 ? s:LatexBoundary(key) : ''
+	endfor
+	" The backtracking regexp engine is much faster on the LaTeX keys.
+	let pattern = (a:from == 0 ? '\%#=1' : '') . '\V\C' . s:TriePattern(trie)
+	let s:cache[a:from] = [deepcopy(a:pairs), table, pattern]
+	return [table, pattern]
+endfunction
+
+" Return a very-nomagic pattern matching all keys in the trie, that is, a
+" branch per character shared by keys, so that a match fails fast.  Keys
+" ending in a plain character are merged into a collection, and longer keys
+" come before a key ending at the same node.
+function! s:TriePattern(node) abort
+	let branches = []
+	let leaves = []
+	for char in sort(filter(keys(a:node), '!empty(v:val)'))
+		let child = a:node[char]
+		if child == {'': ''} && char !~# '[]^\\/-]'
+			call add(leaves, char)
+		else
+			call add(branches, escape(char, '\/') . s:TriePattern(child))
+		endif
+	endfor
+	if len(leaves) == 1
+		call add(branches, leaves[0])
+	elseif len(leaves) > 1
+		call add(branches, '\[' . join(leaves, '') . ']')
+	endif
+	if has_key(a:node, '')
+		call add(branches, a:node[''])
+	endif
+	return len(branches) == 1 ? branches[0] : '\%(' . join(branches, '\|') . '\)'
+endfunction
+
+" Return what must not follow the LaTeX command key for it to match in full:
+" a control word such as \in must not be followed by a letter (to leave \int
+" alone), and a sub- or superscript such as ^1 not by a letter or digit.
+function! s:LatexBoundary(key) abort
+	if a:key =~# '^[_^][0-9A-Za-z]$'
+		return '\[0-9A-Za-z]\@!'
+	elseif a:key =~# '\a$'
+		return '\a\@!'
+	endif
+	return ''
+endfunction
+
+let &cpoptions = s:save_cpo
+unlet s:save_cpo
