@@ -1,30 +1,60 @@
-Tex2UTF8, conversion between UTF-8 and LaTeX       *TeX2UTF8* *tex2utf8*
-===========================================================================
+*latex2utf8.txt*  Conversion between UTF-8 and LaTeX   *TeX2UTF8* *tex2utf8*
 
+===========================================================================
 0. Purpose ~
 
-This Vim plug-in provides the two commands *:Latex2UTF8* and *:UTF8ToLatex*
+This Vim plug-in provides the two commands
+
+  *:LatexToUTF8*  convert LaTeX commands to Unicode characters, and
+  *:UTF8ToLatex*  convert Unicode characters back to LaTeX commands,
+
 that operate on a range (by default the whole buffer) and convert forth and
-back between LaTeX commands and Unicode (UTF-8 encoded) characters.
+back between LaTeX commands and Unicode (UTF-8 encoded) characters, say
+between '\alpha' and 'α', 'x^2' and 'x²', or '\mathbb{R}' and 'ℝ'.
 
+A command is only converted as a whole: a command ending in a letter, such
+as '\in', must not be followed by a letter (so '\int' is left alone), and a
+single sub- or superscript, such as '^1', not by a letter or digit.  Where
+several commands start alike, the longest one wins, say '\sqrt[3]' over
+'\sqrt'.  The built-in pairs never convert plain ASCII characters such as
+'{', '#' or '|' back to LaTeX.
+
+===========================================================================
 1. Configuration ~
-                                                  *tex2uft8-configuration*
+                                                  *tex2utf8-configuration*
 
+                                                        *g:latex2utf8_pairs*
 Pairs of LaTeX commands and Unicode characters between which to convert
-forth, say from '\command' to 'c', can be added by the list of pairs
-*g:latex2utf8_pairs_latex*, say by adding to `vimrc` the lines: >
+forth and back, say between '\command' and 'c', can be added to the list
+g:latex2utf8_pairs, say by adding to `vimrc` the lines: >
+
+  let g:latex2utf8_pairs = [
+        \ ['\command', 'c'],
+        \ ]
+<
+                                                  *g:latex2utf8_pairs_latex*
+To only convert forth from '\command' to 'c', add the pair to the list
+g:latex2utf8_pairs_latex instead: >
 
   let g:latex2utf8_pairs_latex = [
-			  \ ['\command, 'c'],
-			  \]
+        \ ['\command', 'c'],
+        \ ]
 <
-The other way around, to convert back from 'c' to '\command', add to the list
-*g:latex2utf8_pairs_utf8* the same pair: >
+                                                   *g:latex2utf8_pairs_utf8*
+To only convert back from 'c' to '\command', add the pair to the list
+g:latex2utf8_pairs_utf8 instead: >
 
   let g:latex2utf8_pairs_utf8 = [
-	  \ ['\command, 'c'],
-	  \]
+        \ ['\command', 'c'],
+        \ ]
 <
+These lists are read on each conversion, and their pairs take precedence
+over the built-in ones.  If several pairs share a command (or character),
+then the first one is used to convert it.
 
+                                                *latex2utf8#DefaultPairs()*
+latex2utf8#DefaultPairs() returns a copy of the built-in pairs as a
+dictionary with the keys "both" (converted forth and back) and "latex"
+(converted forth only).
 
-vim:tw=78:ts=2:sts=2:sw=2:ft=help:norl
+ vim:tw=78:ts=8:ft=help:norl:
